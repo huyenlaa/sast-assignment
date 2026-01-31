@@ -1,0 +1,5 @@
+semgrep_sast_scan:
+
+    name: Semgrep SAST Scan
+
+    runs-on: ubuntu-latest
