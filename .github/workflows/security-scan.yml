@@ -24,7 +24,7 @@ jobs:
 
       # Step 3: Pretty print results
       - name: Pretty-print Semgrep JSON
-        run: jq. semgrep-results.json
+        run: jq . semgrep-results.json
 
       # Step 4: Upload results as artifact
       - name: Upload Semgrep results
