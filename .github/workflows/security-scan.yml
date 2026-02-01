@@ -1,34 +1,51 @@
-name: Semgrep SAST Scan
+semgrep_sast_scan:
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+ name: Semgrep SAST Scan
 
-jobs:
-  semgrep_sast_scan:
-    name: Semgrep SAST Scan
-    runs-on: ubuntu-latest
+ runs-on: ubuntu-latest
+ 
+ steps:
 
-    steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Step 1: Check out the repository's code so the workflow can access it.
 
-      # Step 2: Run Semgrep using Docker
-      - name: Run Semgrep Scan
-        run: |
-          docker run --rm -v "${{ github.workspace }}:/src" semgrep/semgrep semgrep scan /src --json -o semgrep-results.json
+  - name: Checkout code
 
+    uses: actions/checkout@v4
 
-      # Step 3: Pretty print results
-      - name: Pretty-print Semgrep JSON
-        run: jq . semgrep-results.json
+ 
 
-      # Step 4: Upload results as artifact
-      - name: Upload Semgrep results
-        uses: actions/upload-artifact@v4
-        with:
+      # Step 2: Run the Semgrep SAST scan using its official Docker image.
+
+      # This command mounts the current directory into the container and tells Semgrep to scan it.
+
+      # The results are output in JSON format to a file named 'semgrep-results.json'.
+
+  - name: Run Semgrep Scan
+
+    run: |
+
+       docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan /src --json -o semgrep-results.json
+
+             
+
+      # Provide a better view of the output             
+
+   - name: Pretty-print Semgrep JSON
+
+     run: jq . semgrep-results.json
+
+ 
+
+      # Step 3: Upload the JSON report as a build artifact.
+
+      # This makes the results available for download from the workflow run's summary page.
+
+   - name: Upload Semgrep results
+
+     uses: actions/upload-artifact@v4
+
+     with:
+
           name: semgrep-results
+
           path: semgrep-results.json
